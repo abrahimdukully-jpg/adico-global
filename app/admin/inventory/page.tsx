@@ -18,7 +18,9 @@ export default async function InventoryPage(){
  const productName=(id:string)=>products.find(x=>x.id===id)?.name??"Product";
  const locationName=(id:string)=>locations.find(x=>x.id===id)?.name??"Location";
  const retailerName=(id:string)=>retailers.find(x=>x.user_id===id)?.applicant_name??"Approved retailer";
- const errors=[productsQ.error,locationsQ.error,retailersQ.error,allocationsQ.error,movementsQ.error].filter(Boolean);
+ const queryResults=[["products",productsQ.error],["locations",locationsQ.error],["approved retailers",retailersQ.error],["allocations",allocationsQ.error],["stock movements",movementsQ.error]] as const;
+ const errors=queryResults.filter((entry)=>entry[1]);
+ for(const [source,error] of errors){console.error("ADICo inventory read failed",source,error?.code??"unknown",error?.message??"");}
  return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Inventory & consignments</h1><p>Record stock received into ADICo locations, reserve stock for approved retailers, dispatch consignment stock and confirm retailer receipts. All quantities are recorded in the stock ledger.</p>
  <nav className="admin-nav"><Link href="/admin/products">Product catalogue</Link><Link href="/admin/retailer-interest">Retailer enquiries</Link></nav>
  {errors.length>0&&<p role="alert">Some inventory records could not be loaded. Check administrator permissions and database connectivity.</p>}
