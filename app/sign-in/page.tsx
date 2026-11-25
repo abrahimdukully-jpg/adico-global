@@ -8,5 +8,6 @@ export default function SignInPage() {
     <h1>Sign in</h1>
     <p>Sign in with your ADICo Global administrator email and password. Administrator tools are available only to authorised admin accounts.</p>
     <SignInForm />
+    <p><Link href="/forgot-password">Set up or reset your password</Link></p>
   </main>;
 }
