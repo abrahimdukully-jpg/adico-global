@@ -1,3 +1,5 @@
+import RecoveryLinkHandler from "./recovery-link-handler";
+
 const pillars = [
   ["Retailer network", "Apply to become an approved ADICo product retailer."],
   ["Consignment supply", "Eligible retailers receive ADICo stock under a documented consignment agreement."],
@@ -6,7 +8,7 @@ const pillars = [
 ];
 
 export default function Home() {
-  return <main>
+  return <><RecoveryLinkHandler /><main>
     <header className="topbar"><div className="brand"><span className="brand-mark">A</span><span>ADICo <b>GLOBAL</b></span></div><span className="tagline">Connecting People. Creating Opportunities.</span><a className="secondary" href="/sign-in">Administrator sign in</a></header>
     <section className="hero">
       <p className="eyebrow">A connected commerce network</p>
@@ -17,5 +19,5 @@ export default function Home() {
     </section>
     <section id="how-it-works" className="section"><p className="eyebrow">How ADICo Global works</p><h2>One network. Clear responsibilities.</h2><div className="grid">{pillars.map(([title,desc],i)=><article className="tile" key={title}><span className="number">0{i+1}</span><h3>{title}</h3><p>{desc}</p></article>)}</div></section>
     <footer><span>ADICo GLOBAL</span><span>Connecting People. Creating Opportunities.</span><small>Country availability is subject to local readiness and approval.</small></footer>
-  </main>;
+  </main></>;
 }
