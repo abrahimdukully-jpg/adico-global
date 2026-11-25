@@ -19,3 +19,22 @@ Next.js App Router, TypeScript, Supabase Auth/Postgres. This repository is the w
 3. Review `supabase/migrations` against the existing Supabase schema before applying any migration.
 
 Never put a Supabase service-role key in browser code or commit secrets.
+
+
+## Current application routes
+- `/` — public ADICo Global landing page.
+- `/retailer-interest` — public retailer enquiry intake for Liberia and Norway.
+- `/catalogue` — public read-only catalogue; only active products appear.
+- `/admin/retailer-interest` — authenticated administrator review workspace.
+
+## Database migration order
+Apply only after reviewing the live schema, preferably in a staging project:
+1. `202611250001_retailer_interest_requests.sql`
+2. `202611250002_commerce_foundation.sql`
+3. `202611250003_admin_enquiry_review.sql`
+
+The migrations are committed but have not been applied to the connected Supabase production database. Existing profiles and role structures are intentionally preserved.
+
+## Validation
+- `npm run typecheck` runs TypeScript validation.
+- GitHub Actions workflow `.github/workflows/ci.yml` runs type checking and a Next.js production build on pushes and pull requests to main.
