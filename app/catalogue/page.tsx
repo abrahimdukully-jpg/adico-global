@@ -1,0 +1,9 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+type Product = { id:string; name:string; slug:string; description:string|null; image_url:string|null; currency_code:string; retail_price:number; product_categories:{name:string}|null };
+export default async function CataloguePage() {
+ let products:Product[]=[]; let unavailable=false;
+ try { const supabase=await createClient(); const {data,error}=await supabase.from("products").select("id,name,slug,description,image_url,currency_code,retail_price,product_categories(name)").eq("is_active",true).order("name"); if(error) unavailable=true; else products=(data??[]) as unknown as Product[]; } catch { unavailable=true; }
+ return <main className="catalogue-page"><header className="catalogue-header"><Link href="/">← ADICo Global</Link><span>PRODUCT MARKETPLACE</span></header><section className="catalogue-intro"><p className="eyebrow">ADICo Global catalogue</p><h1>Products for connected markets.</h1><p>Browse products currently approved for display. Availability, delivery and final pricing are confirmed for each country at checkout.</p></section>
+ {unavailable?<p className="catalogue-empty">The catalogue is being prepared. Please check back soon.</p>:products.length===0?<p className="catalogue-empty">Our first product collection is being prepared. Retailer and customer access will open as country operations become ready.</p>:<section className="product-grid">{products.map(p=><article className="product-card" key={p.id}>{p.image_url?<img src={p.image_url} alt={p.name}/>:<div className="product-placeholder">ADICo</div>}<p className="eyebrow">{p.product_categories?.name??"ADICo product"}</p><h2>{p.name}</h2><p>{p.description}</p><strong>{p.currency_code} {Number(p.retail_price).toFixed(2)}</strong></article>)}</section>}<footer><span>ADICo GLOBAL</span><span>Connecting People. Creating Opportunities.</span></footer></main>;
+}
