@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+type Enquiry={id:string;full_name:string;email:string;country_code:string;business_type:string;business_name:string|null;message:string|null;status:string;created_at:string};
+export default async function RetailerReviewPage(){
+ const supabase=await createClient(); const {data:{user}}=await supabase.auth.getUser();
+ if(!user)return <main className="admin-page"><Link href="/">← ADICo Global</Link><h1>Administrator sign-in required</h1><p>Sign in with an authorised ADICo administrator account to review retailer enquiries.</p></main>;
+ const {data:role}=await supabase.rpc("current_role");
+ if(role!=="admin")return <main className="admin-page"><Link href="/">← ADICo Global</Link><h1>Access restricted</h1><p>This workspace is limited to authorised administrators.</p></main>;
+ const {data,error}=await supabase.from("retailer_interest_requests").select("id,full_name,email,country_code,business_type,business_name,message,status,created_at").order("created_at",{ascending:false}).limit(100);
+ const enquiries=(data??[]) as Enquiry[];
+ return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Retailer enquiries</h1><p>Review applications before verification, agreement and retailer activation.</p>{error?<p role="alert">Unable to load enquiries. Check database migration and administrator permissions.</p>:enquiries.length===0?<p>No enquiries have been submitted yet.</p>:<div className="enquiry-list">{enquiries.map(e=><article className="enquiry-card" key={e.id}><div className="enquiry-top"><h2>{e.full_name}</h2><span>{e.country_code} · {e.status.replaceAll("_"," ")}</span></div><p><a href={"mailto:"+e.email}>{e.email}</a> · {e.business_type.replaceAll("_"," ")}{e.business_name?" · "+e.business_name:""}</p>{e.message&&<p>{e.message}</p>}<small>Received {new Date(e.created_at).toLocaleString()}</small><form action="/api/admin/retailer-interest" method="post"><input type="hidden" name="id" value={e.id}/><label>Review status<select name="status" defaultValue={e.status}><option value="received">Received</option><option value="under_review">Under review</option><option value="contacted">Contacted</option><option value="declined">Declined</option></select></label><button type="submit">Save review status</button></form></article>)}</div>}</main>;
+}
