@@ -7,7 +7,7 @@ const pillars = [
 
 export default function Home() {
   return <main>
-    <header className="topbar"><div className="brand"><span className="brand-mark">A</span><span>ADICo <b>GLOBAL</b></span></div><span className="tagline">Connecting People. Creating Opportunities.</span></header>
+    <header className="topbar"><div className="brand"><span className="brand-mark">A</span><span>ADICo <b>GLOBAL</b></span></div><span className="tagline">Connecting People. Creating Opportunities.</span><a className="secondary" href="/sign-in">Administrator sign in</a></header>
     <section className="hero">
       <p className="eyebrow">A connected commerce network</p>
       <h1>Opportunity moves<br/><em>when people connect.</em></h1>
