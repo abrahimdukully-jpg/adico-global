@@ -26,6 +26,7 @@ export default function RetailerInterestPage() {
     <label>Business name (optional)<input name="business_name" maxLength={160}/></label>
     <label>Tell us about your sales channels (optional)<textarea name="message" rows={4} maxLength={1500}/></label>
     <label className="consent"><input type="checkbox" name="consent_to_contact" value="true" required/> I agree that ADICo may contact me about this retailer enquiry.</label>
+    <p className="privacy-link">Please read our <a href="/privacy">retailer enquiry privacy notice</a> before submitting.</p>
     <button disabled={busy}>{busy?"Submitting…":"Submit enquiry"}</button>
     {notice&&<p role="status" className="notice">{notice}</p>}
   </form></section></main>;
