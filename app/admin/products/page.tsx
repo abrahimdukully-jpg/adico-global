@@ -10,7 +10,7 @@ export default async function AdminProductsPage() {
   if(role!=="admin") return <main className="admin-page"><Link href="/">← ADICo Global</Link><h1>Access restricted</h1><p>This workspace is limited to authorised administrators.</p></main>;
   const {data,error}=await supabase.from("products").select("id,sku,name,category,currency_code,retail_price,is_active,slug").order("created_at",{ascending:false});
   const products=(data??[]) as Product[];
-  return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Product catalogue</h1><p>Create and maintain ADICo products. New products remain hidden from customers until explicitly activated.</p>
+  return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Product catalogue</h1><nav className="admin-nav"><Link href="/admin/inventory">Inventory & consignments</Link><Link href="/admin/retailer-interest">Retailer enquiries</Link></nav><p>Create and maintain ADICo products. New products remain hidden from customers until explicitly activated.</p>
   <section className="admin-product-form"><h2>Add a product</h2><form action="/api/admin/products" method="post">
     <label>SKU<input name="sku" required maxLength={64}/></label>
     <label>Product name<input name="name" required maxLength={160}/></label>
