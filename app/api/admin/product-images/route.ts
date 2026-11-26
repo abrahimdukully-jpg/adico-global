@@ -21,7 +21,6 @@ export async function GET() {
       pathname: blob.pathname,
       size: blob.size,
       uploadedAt: blob.uploadedAt,
-      contentType: blob.contentType,
     }]));
     return NextResponse.json({ blobs: Array.from(unique.values()) });
   } catch (error) {
