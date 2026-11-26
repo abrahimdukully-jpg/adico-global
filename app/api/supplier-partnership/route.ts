@@ -13,7 +13,7 @@ export async function POST(request:Request){
   if(b.consent_to_contact!=="true")return NextResponse.json({error:"Consent is required to submit."},{status:400});
   const list=(v:unknown,allowed:string[])=>Array.isArray(v)?v.filter((x):x is string=>typeof x==="string"&&allowed.includes(x)).slice(0,allowed.length):[];
   const website=clean(b.website,300);
-  if(website&&!/^https?:\\/\\//i.test(website))return NextResponse.json({error:"Enter a website beginning with https:// or http://."},{status:400});
+  if(website){try{const parsed=new URL(website);if(!["http:","https:"].includes(parsed.protocol))throw new Error("Invalid protocol");}catch{return NextResponse.json({error:"Enter a valid website beginning with https:// or http://."},{status:400});}}
   const supabase=await createClient();
   const {error}=await supabase.from("supplier_interest_requests").insert({company_name,contact_name,email,country_code,supplier_type,position:clean(b.position,120)||null,phone:clean(b.phone,60)||null,website:website||null,product_categories:list(b.product_categories,allowedCategories),product_details:clean(b.product_details,3000)||null,partnership_models:list(b.partnership_models,allowedModels),minimum_order_quantity:clean(b.minimum_order_quantity,300)||null,export_markets:clean(b.export_markets,1500)||null,additional_message:clean(b.additional_message,2000)||null,consent_to_contact:true});
   if(error){console.error("Supplier enquiry insert failed",error.code);return NextResponse.json({error:"We could not save your proposal. Please try again later."},{status:503});}
