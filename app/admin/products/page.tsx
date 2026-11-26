@@ -12,14 +12,13 @@ export default async function AdminProductsPage() {
   const {data,error}=await supabase.from("products").select("id,sku,name,category,currency_code,retail_price,is_active,slug").order("created_at",{ascending:false});
   const products=(data??[]) as Product[];
   return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Product catalogue</h1><nav className="admin-nav"><Link href="/admin/inventory">Inventory & consignments</Link><Link href="/admin/retailer-interest">Retailer enquiries</Link></nav><p>Create and maintain ADICo products. New products remain hidden from customers until explicitly activated.</p>
-  <ProductImageUpload />
   <section className="admin-product-form"><h2>Add a product</h2><form action="/api/admin/products" method="post">
     <label>SKU<input name="sku" required maxLength={64}/></label>
     <label>Product name<input name="name" required maxLength={160}/></label>
     <label>Category<input name="category" required maxLength={80}/></label>
     <label>Currency<select name="currency_code" defaultValue="USD"><option>USD</option><option>LRD</option><option>NOK</option></select></label>
     <label>Retail price<input name="retail_price" type="number" min="0" step="0.01" required/></label>
-    <label>Image URL (optional)<input name="image_url" type="url" maxLength={1000}/></label>
+    <ProductImageUpload />
     <label>Description (optional)<textarea name="description" rows={3} maxLength={2000}/></label>
     <label className="admin-inline"><input name="is_active" type="checkbox" value="true"/> Publish in public catalogue</label>
     <button type="submit">Save product</button>
