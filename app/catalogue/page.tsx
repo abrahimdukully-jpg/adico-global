@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const collections = [
-  { title: "Rice, pasta & pantry staples", items: ["Golden Indian Parboiled Rice", "FBC Star Indian Parboiled Rice", "Besler Spaghetti", "Cream of Wheat", "Nutrib cereal"] },
+  { title: "Rice, pasta & pantry staples", items: ["Golden Indian Parboiled Rice", "FBC Star Indian Parboiled Rice", "Besler Spaghetti", "Besler Macaroni & Cheese Dinner — 24 × 206 g per box", "Cream of Wheat", "Nutrib cereal"] },
   { title: "Cooking essentials", items: ["Star Oil pure vegetable cooking oil — selected pack sizes", "Champion bagged onions", "Vego tomato paste", "Golden tomato paste"] },
   { title: "Canned fish & protein", items: ["Royal Sardines — 125 g", "FBC Sardines", "Lafish Sardines", "Princesse Sardines", "Canned mackerel"] },
   { title: "Tea, drinks & refreshments", items: ["Sun Island Gold Label Tea — 100 tea bags / 200 g", "Achoura Green Tea", "ROX Energy Drink — selected can sizes"] },
@@ -20,6 +20,7 @@ export default function CataloguePage() {
       <p>Explore the product ranges being prepared for ADICo Global in Liberia. This preliminary catalogue is based on product photographs shared with ADICo and the initial supplier collection.</p>
       <p className="catalogue-status">Prices are being confirmed with our wholesale supplier. Product availability, exact pack sizes and final specifications will be updated before orders open.</p>
     </section>
+    <section className="catalogue-featured"><div><p className="eyebrow">Featured product</p><h2>Besler Macaroni &amp; Cheese Dinner</h2><p>Pack: 24 × 206 g per box</p><strong>US$10.00 per box</strong><p className="catalogue-status">Price shown from the product information supplied. Final stock confirmation required.</p></div></section>
     <section className="catalogue-grid" aria-label="Product categories">
       {collections.map((group,index)=><article className="catalogue-category" key={group.title}>
         <span className="catalogue-number">{String(index+1).padStart(2,"0")}</span>
