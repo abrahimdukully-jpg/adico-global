@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
+import { put, list } from "@vercel/blob";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -7,7 +7,7 @@ export const maxDuration = 30;
 
 const allowed = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
-export async function POST(request: Request) {
+export async function GET() {\n  const supabase = await createClient();\n  const { data: { user } } = await supabase.auth.getUser();\n  if (!user) return NextResponse.json({ error: "Sign in required." }, { status: 401 });\n  const { data: role, error: roleError } = await supabase.rpc("current_role");\n  if (roleError || role !== "admin") return NextResponse.json({ error: "Administrator access required." }, { status: 403 });\n  try {\n    const result = await list({ prefix: "products/", limit: 1000 });\n    return NextResponse.json({ blobs: result.blobs.map(({ url, pathname, size, uploadedAt, contentType }) => ({ url, pathname, size, uploadedAt, contentType })) });\n  } catch (error) {\n    console.error("Product image listing failed", error instanceof Error ? error.message : "unknown");\n    return NextResponse.json({ error: "Unable to load product images." }, { status: 500 });\n  }\n}\n\nexport async function POST(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
