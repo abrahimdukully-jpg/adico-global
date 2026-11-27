@@ -1,35 +1,98 @@
+import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-const collections = [
-  { title: "Rice, pasta & pantry staples", items: ["Golden Indian Parboiled Rice", "FBC Star Indian Parboiled Rice", "Besler Spaghetti", "Besler Macaroni & Cheese Dinner — 24 × 206 g per box", "Cream of Wheat", "Nutrib cereal"] },
-  { title: "Cooking essentials", items: ["Star Oil pure vegetable cooking oil — selected pack sizes", "Champion bagged onions", "Vego tomato paste", "Golden tomato paste"] },
-  { title: "Canned fish & protein", items: ["Royal Sardines — 125 g", "FBC Sardines", "Lafish Sardines", "Princesse Sardines", "Canned mackerel"] },
-  { title: "Tea, drinks & refreshments", items: ["Sun Island Gold Label Tea — 100 tea bags / 200 g", "Achoura Green Tea", "ROX Energy Drink — selected can sizes"] },
-  { title: "Milk, dairy & nutrition", items: ["Yoghi Yoghi yoghurt powder", "Powdered milk", "Sweetened creamer", "Nutribom infant cereal", "Hero Baby infant formula"] },
-  { title: "Biscuits, snacks & confectionery", items: ["Golden Cream Delight — selected flavours", "Golden Puffy cheese snacks", "Golden Rodeo Vanilla", "Biscuits and wafers — selected varieties"] },
-  { title: "Household & personal care", items: ["Vi-John Aloe Vera toothpaste", "So Klin detergent", "Star beauty soap", "Fruit-scented and medicated soaps", "Bleach, antiseptic disinfectant and rubbing alcohol"] },
-  { title: "Home, safety & utility", items: ["JOVIS D-size batteries", "FBC mosquito coils", "FBC safety matches", "Arrow and Fantôme insecticide sprays", "Shovels and selected tools"] }
-];
+type Product = {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  image_url: string | null;
+  retail_price: number | string | null;
+  currency_code: string | null;
+};
 
-export default function CataloguePage() {
-  return <main className="catalogue-page">
-    <header className="catalogue-header"><Link href="/">← ADICo Global</Link><span>LIBERIA PRODUCT CATALOGUE</span></header>
-    <section className="catalogue-intro">
-      <p className="eyebrow">ADICo Global · Initial Liberia collection</p>
-      <h1>Everyday products.<br/>A connected marketplace.</h1>
-      <p>Explore the product ranges being prepared for ADICo Global in Liberia. This preliminary catalogue is based on product photographs shared with ADICo and the initial supplier collection.</p>
-      <p className="catalogue-status">Prices are being confirmed with our wholesale supplier. Product availability, exact pack sizes and final specifications will be updated before orders open.</p>
-    </section>
-    <section className="catalogue-featured"><div><p className="eyebrow">Featured product</p><h2>Besler Macaroni &amp; Cheese Dinner</h2><p>Pack: 24 × 206 g per box</p><p><strong>ADICo minimum retail price: US$13.00 per box</strong></p></div></section>
-    <section className="catalogue-grid" aria-label="Product categories">
-      {collections.map((group,index)=><article className="catalogue-category" key={group.title}>
-        <span className="catalogue-number">{String(index+1).padStart(2,"0")}</span>
-        <h2>{group.title}</h2>
-        <ul>{group.items.map(item=><li key={item}>{item}</li>)}</ul>
-        <p className="catalogue-price">Price to be confirmed</p>
-      </article>)}
-    </section>
-    <section className="catalogue-note"><h2>Before ordering</h2><p>This is a preview catalogue, not a live inventory or order list. Final brand variants, pack sizes, product compliance, stock and retail prices will be confirmed before products become orderable. No payment is being collected for these preview listings.</p><Link href="/retailer-interest">Interested in becoming an ADICo retailer? Enquire here →</Link></section>
-    <footer><span>ADICo GLOBAL</span><span>Connecting People. Creating Opportunities.</span><small>Initial market: Liberia · Product range subject to supplier confirmation.</small></footer>
-  </main>;
+function formatPrice(product: Product) {
+  const price = Number(product.retail_price ?? 0);
+  if (!Number.isFinite(price) || price <= 0) return "Price coming soon";
+  const currency = product.currency_code || "USD";
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(price);
+}
+
+export default async function CataloguePage() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("id,name,description,category,image_url,retail_price,currency_code")
+    .eq("is_active", true)
+    .not("image_url", "is", null)
+    .order("category", { ascending: true })
+    .order("name", { ascending: true });
+
+  const products = (data ?? []) as Product[];
+  const categories = Array.from(new Set(products.map((product) => product.category || "Other products")));
+
+  return (
+    <main className="catalogue-page">
+      <header className="catalogue-header">
+        <Link href="/">← ADICo Global</Link>
+        <span>LIBERIA PRODUCT CATALOGUE</span>
+      </header>
+
+      <section className="catalogue-intro">
+        <p className="eyebrow">ADICo Global · Liberia collection</p>
+        <h1>Everyday products.<br />A connected marketplace.</h1>
+        <p>Explore products currently presented in the ADICo Global catalogue. Product details and prices are being confirmed before ordering is enabled.</p>
+        <p className="catalogue-status">Prices shown as “Price coming soon” are not yet available for purchase. Supplier wholesale costs are confidential and are never displayed here.</p>
+      </section>
+
+      {error ? (
+        <section className="catalogue-note" role="status">
+          <h2>Catalogue temporarily unavailable</h2>
+          <p>We are refreshing the product catalogue. Please check again shortly.</p>
+        </section>
+      ) : products.length === 0 ? (
+        <section className="catalogue-note">
+          <h2>Product listings are being prepared</h2>
+          <p>ADICo is confirming product images, specifications and retail prices before displaying listings.</p>
+        </section>
+      ) : (
+        <section className="catalogue-products" aria-label="Available catalogue products">
+          {categories.map((category) => (
+            <section className="catalogue-product-group" key={category}>
+              <h2>{category}</h2>
+              <div className="catalogue-product-grid">
+                {products.filter((product) => (product.category || "Other products") === category).map((product) => (
+                  <article className="catalogue-product-card" key={product.id}>
+                    <div className="catalogue-product-image">
+                      {product.image_url ? (
+                        <Image src={product.image_url} alt={product.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 25vw" unoptimized style={{ objectFit: "contain" }} />
+                      ) : null}
+                    </div>
+                    <div className="catalogue-product-copy">
+                      <h3>{product.name}</h3>
+                      {product.description ? <p>{product.description}</p> : null}
+                      <strong className="catalogue-product-price">{formatPrice(product)}</strong>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </section>
+      )}
+
+      <section className="catalogue-note">
+        <h2>Ordering information</h2>
+        <p>This catalogue is for product discovery. Checkout and payment are not enabled for listings awaiting final retail prices, verified pack details, stock confirmation or applicable regulatory checks. Product images are illustrative of the listed item and final variants are subject to supplier confirmation.</p>
+        <Link href="/retailer-interest">Interested in becoming an ADICo retailer? Enquire here →</Link>
+      </section>
+
+      <footer>
+        <span>ADICo GLOBAL</span>
+        <span>Connecting People. Creating Opportunities.</span>
+        <small>Initial market: Liberia · Product availability subject to confirmation.</small>
+      </footer>
+    </main>
+  );
 }
