@@ -5,8 +5,8 @@ ADICo-owned retailer marketplace. Initial launch markets: Liberia and Norway.
 ## Business rules
 - Retailer-only commercial network; no public-investor recruitment or investment-return features.
 - Approved retailers receive stock on consignment.
-- Retailers earn 10% commission on eligible completed, settled sales.
-- ADICo's minimum retail pricing policy is a 40% markup on wholesale cost (wholesale cost × 1.40).
+- Retailers earn 10% commission calculated on the final retail selling price for eligible completed, settled sales.
+- ADICo's minimum retail pricing policy is a 30% markup on wholesale cost (wholesale cost × 1.30).
 - Supplier wholesale costs are confidential and must not be displayed in the public catalogue.
 - Customers may purchase without retailer membership.
 - Territories are non-exclusive by default.
