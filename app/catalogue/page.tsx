@@ -20,7 +20,7 @@ export default function CataloguePage() {
       <p>Explore the product ranges being prepared for ADICo Global in Liberia. This preliminary catalogue is based on product photographs shared with ADICo and the initial supplier collection.</p>
       <p className="catalogue-status">Prices are being confirmed with our wholesale supplier. Product availability, exact pack sizes and final specifications will be updated before orders open.</p>
     </section>
-    <section className="catalogue-featured"><div><p className="eyebrow">Featured product</p><h2>Besler Macaroni &amp; Cheese Dinner</h2><p>Pack: 24 × 206 g per box</p><p><strong>ADICo minimum retail price: US$14.00 per box</strong></p></div></section>
+    <section className="catalogue-featured"><div><p className="eyebrow">Featured product</p><h2>Besler Macaroni &amp; Cheese Dinner</h2><p>Pack: 24 × 206 g per box</p><p><strong>ADICo minimum retail price: US$13.00 per box</strong></p></div></section>
     <section className="catalogue-grid" aria-label="Product categories">
       {collections.map((group,index)=><article className="catalogue-category" key={group.title}>
         <span className="catalogue-number">{String(index+1).padStart(2,"0")}</span>
