@@ -12,7 +12,7 @@ export default async function AdminProductsPage() {
   const {data,error}=await supabase.from("products").select("id,sku,name,category,currency_code,retail_price,is_active,slug").order("created_at",{ascending:false});
   const products=(data??[]) as Product[];
   return <main className="admin-page"><Link href="/">← ADICo Global</Link><p className="eyebrow">Central administration</p><h1>Product catalogue</h1><nav className="admin-nav"><Link href="/admin/inventory">Inventory & consignments</Link><Link href="/admin/retailer-interest">Retailer enquiries</Link></nav><p>Create and maintain ADICo products. New products remain hidden from customers until explicitly activated.</p>
-  <section className="admin-product-form"><h2>Add a product</h2><form action="/api/admin/products" method="post">
+  <section className="admin-product-form"><h2>Add a product</h2><p>Pricing policy: set the minimum retail price at 140% of the wholesale cost (40% markup). Keep supplier wholesale costs confidential and out of the public catalogue.</p><form action="/api/admin/products" method="post">
     <label>SKU<input name="sku" required maxLength={64}/></label>
     <label>Product name<input name="name" required maxLength={160}/></label>
     <label>Category<input name="category" required maxLength={80}/></label>
