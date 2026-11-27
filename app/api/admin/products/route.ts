@@ -13,12 +13,14 @@ export async function POST(request:Request) {
   const name=String(form.get("name")??"").trim();
   const category=String(form.get("category")??"").trim();
   const currency=String(form.get("currency_code")??"USD");
+  const wholesaleCost=Number(form.get("wholesale_cost"));
   const price=Number(form.get("retail_price"));
+  const minimumRetailPrice=Math.round(wholesaleCost*1.30*100)/100;
   const image=String(form.get("image_url")??"").trim();
   const description=String(form.get("description")??"").trim();
   const active=form.get("is_active")==="true";
-  if(!sku||sku.length>64||!name||name.length>160||!category||category.length>80||!["USD","LRD","NOK"].includes(currency)||!Number.isFinite(price)||price<0||image.length>1000||description.length>2000) {
-    return NextResponse.json({error:"Please check the product details."},{status:400});
+  if(!sku||sku.length>64||!name||name.length>160||!category||category.length>80||!["USD","LRD","NOK"].includes(currency)||!Number.isFinite(wholesaleCost)||wholesaleCost<=0||!Number.isFinite(price)||price<minimumRetailPrice||image.length>1000||description.length>2000) {
+    return NextResponse.json({error:"Please check the product details. Retail price must be at least 130% of wholesale cost (30% markup).",minimumRetailPrice: Number.isFinite(minimumRetailPrice)?minimumRetailPrice:null},{status:400});
   }
   const categorySlug=slugify(category);
   const {data:categoryRow,error:categoryError}=await supabase.from("product_categories").upsert({name:category,slug:categorySlug,is_active:true},{onConflict:"name"}).select("id").single();
@@ -27,7 +29,7 @@ export async function POST(request:Request) {
   const slug=baseSlug+"-"+crypto.randomUUID().slice(0,8);
   const {error}=await supabase.from("products").insert({
     sku,name,category,category_id:categoryRow.id,slug,description:description||null,image_url:image||null,
-    currency,currency_code:currency,retail_price:price,active,is_active:active
+    currency,currency_code:currency,wholesale_cost:wholesaleCost,retail_price:price,active,is_active:active
   });
   if(error) {
     console.error("Admin product insert failed",error.code);
