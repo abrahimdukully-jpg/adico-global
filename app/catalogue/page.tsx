@@ -43,7 +43,7 @@ export default async function CataloguePage() {
         <p className="eyebrow">ADICo Global · Liberia collection</p>
         <h1>Everyday products.<br />A connected marketplace.</h1>
         <p>Explore products currently presented in the ADICo Global catalogue. Product details and prices are being confirmed before ordering is enabled.</p>
-        <p className="catalogue-status">Prices shown as “Price coming soon” are not yet available for purchase. Supplier wholesale costs are confidential and are never displayed here.</p>
+        <p className="catalogue-status">Prices shown as “Price coming soon” are not yet available for purchase.</p>
       </section>
 
       {error ? (
